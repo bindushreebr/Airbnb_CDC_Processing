@@ -1,0 +1,9 @@
+{
+	"name": "airbnbfactoryadls",
+	"location": "northeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "13721aad-ee5f-4087-ac44-721fc191ef1e",
+		"tenantId": "5a17f766-64bb-40e3-bb8d-03e27071d948"
+	}
+}
