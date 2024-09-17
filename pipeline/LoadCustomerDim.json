@@ -32,7 +32,7 @@
 				}
 			},
 			{
-				"name": "ForEach",
+				"name": "IterateListedFolder",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -45,9 +45,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetCustomerFilesMetadata').output",
+						"value": "@activity('GetCustomerFilesMetadata').output.childItems",
 						"type": "Expression"
 					},
+					"isSequential": true,
 					"activities": [
 						{
 							"name": "UpsertinSynapse",
@@ -229,6 +230,11 @@
 				}
 			}
 		],
+		"variables": {
+			"EachFile": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
