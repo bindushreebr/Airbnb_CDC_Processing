@@ -19,7 +19,15 @@
 					"name": "SynapseForLookup"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "BookingFactDataSynapse",
+						"type": "DatasetReference"
+					},
+					"name": "SynapseFactWrite"
+				}
+			],
 			"transformations": [
 				{
 					"name": "DataQuality"
@@ -32,6 +40,9 @@
 				},
 				{
 					"name": "AlterRowForUpdate"
+				},
+				{
+					"name": "FinalColumns"
 				}
 			],
 			"scriptLines": [
@@ -102,7 +113,75 @@
 				"     desc(SynapseForLookup@timestamp, true),",
 				"     broadcast: 'auto')~> lookupInSynapse",
 				"lookupInSynapse alterRow(insertIf(isNull(SynapseForLookup@booking_id)),",
-				"     updateIf(not(isNull(SynapseForLookup@booking_id)))) ~> AlterRowForUpdate"
+				"     updateIf(not(isNull(SynapseForLookup@booking_id)))) ~> AlterRowForUpdate",
+				"AlterRowForUpdate select(mapColumn(",
+				"          check_out_date = DerivedColumn@check_out_date,",
+				"          customer_id = DerivedColumn@customer_id,",
+				"          timestamp = DerivedColumn@timestamp,",
+				"          owner_id = DerivedColumn@owner_id,",
+				"          check_in_date = DerivedColumn@check_in_date,",
+				"          property_id = DerivedColumn@property_id,",
+				"          amount = DerivedColumn@amount,",
+				"          booking_id = DerivedColumn@booking_id,",
+				"          currency = DerivedColumn@currency,",
+				"          property_location,",
+				"          booking_date = DerivedColumn@booking_date,",
+				"          {stay_duration },",
+				"          booking_year = DerivedColumn@booking_year,",
+				"          booking_month = DerivedColumn@booking_month,",
+				"          full_address = DerivedColumn@full_address,",
+				"          city = DerivedColumn@city,",
+				"          country = DerivedColumn@country,",
+				"          booking_id = SynapseForLookup@booking_id,",
+				"          property_id = SynapseForLookup@property_id,",
+				"          customer_id = SynapseForLookup@customer_id,",
+				"          owner_id = SynapseForLookup@owner_id,",
+				"          check_in_date = SynapseForLookup@check_in_date,",
+				"          check_out_date = SynapseForLookup@check_out_date,",
+				"          booking_date = SynapseForLookup@booking_date,",
+				"          amount = SynapseForLookup@amount,",
+				"          currency = SynapseForLookup@currency,",
+				"          city = SynapseForLookup@city,",
+				"          country = SynapseForLookup@country,",
+				"          full_address = SynapseForLookup@full_address,",
+				"          stay_duration,",
+				"          booking_year = SynapseForLookup@booking_year,",
+				"          booking_month = SynapseForLookup@booking_month,",
+				"          timestamp = SynapseForLookup@timestamp",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FinalColumns",
+				"FinalColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          booking_id as string,",
+				"          property_id as string,",
+				"          customer_id as integer,",
+				"          owner_id as string,",
+				"          check_in_date as date,",
+				"          check_out_date as date,",
+				"          booking_date as timestamp,",
+				"          amount as double,",
+				"          currency as string,",
+				"          city as string,",
+				"          country as string,",
+				"          full_address as string,",
+				"          stay_duration as long,",
+				"          booking_year as integer,",
+				"          booking_month as integer,",
+				"          timestamp as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['booking_id'],",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SynapseFactWrite"
 			]
 		}
 	}
