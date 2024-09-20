@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Data flow1",
+				"name": "DataFlow",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -25,7 +25,7 @@
 					},
 					"traceLevel": "Fine",
 					"continuationSettings": {
-						"customizedCheckpointKey": "b3557108-4d02-4709-a6a6-7e9adcae16be"
+						"customizedCheckpointKey": "16689ba2-6435-4f03-9fc0-df39ae2fc464"
 					}
 				}
 			},
@@ -34,7 +34,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Data flow1",
+						"activity": "DataFlow",
 						"dependencyConditions": [
 							"Succeeded"
 						]
